@@ -103,10 +103,29 @@ cdef class OcTreeNode:
 
 cdef class iterator_base:
     """
-    Iterator over the complete tree (inner nodes and leafs).
+    Base class for iterators over the octree.
     """
     cdef defs.OcTree *treeptr
-    cdef defs.OccupancyOcTreeBase[defs.OcTreeNode].iterator_base *thisptr
+
+    def __cinit__(self):
+        pass
+
+    def __dealloc__(self):
+        pass
+
+    def __is_end(self):
+        return False
+
+    def __is_acceseable(self):
+        return False
+
+
+cdef class tree_iterator(iterator_base):
+    """
+    Iterator over the complete tree (inner nodes and leafs).
+    """
+    cdef tree_iterator_ptr thisptr
+    
     def __cinit__(self):
         pass
 
@@ -177,11 +196,13 @@ cdef class iterator_base:
             return self.thisptr.getX()
         else:
             raise NullPointerException
+            
     def getY(self):
         if self.__is_acceseable():
             return self.thisptr.getY()
         else:
             raise NullPointerException
+            
     def getZ(self):
         if self.__is_acceseable():
             return self.thisptr.getZ()
@@ -200,18 +221,10 @@ cdef class iterator_base:
         else:
             raise NullPointerException
 
-
-cdef class tree_iterator(iterator_base):
-    """
-    Iterator over the complete tree (inner nodes and leafs).
-    """
-    def __cinit__(self):
-        pass
-
     def next(self):
         if self.thisptr and self.treeptr:
             if not self.__is_end():
-                inc(deref(defs.static_cast[tree_iterator_ptr](self.thisptr)))
+                inc(deref(self.thisptr))
                 return self
             else:
                 raise StopIteration
@@ -223,7 +236,7 @@ cdef class tree_iterator(iterator_base):
             while not self.__is_end():
                 yield self
                 if self.thisptr:
-                    inc(deref(defs.static_cast[tree_iterator_ptr](self.thisptr)))
+                    inc(deref(self.thisptr))
                 else:
                     break
         else:
@@ -231,7 +244,7 @@ cdef class tree_iterator(iterator_base):
 
     def isLeaf(self):
         if self.__is_acceseable():
-            return defs.static_cast[tree_iterator_ptr](self.thisptr).isLeaf()
+            return self.thisptr.isLeaf()
         else:
             raise NullPointerException
 
@@ -239,13 +252,28 @@ cdef class leaf_iterator(iterator_base):
     """
     Iterator over the complete tree (leafs).
     """
+    cdef leaf_iterator_ptr thisptr
+    
     def __cinit__(self):
         pass
+
+    def __dealloc__(self):
+        if self.thisptr:
+            del self.thisptr
+
+    def __is_end(self):
+        return deref(self.thisptr) == self.treeptr.end_leafs()
+
+    def __is_acceseable(self):
+        if self.thisptr and self.treeptr:
+            if not self.__is_end():
+                return True
+        return False
 
     def next(self):
         if self.thisptr and self.treeptr:
             if not self.__is_end():
-                inc(deref(defs.static_cast[leaf_iterator_ptr](self.thisptr)))
+                inc(deref(self.thisptr))
                 return self
             else:
                 raise StopIteration
@@ -257,7 +285,7 @@ cdef class leaf_iterator(iterator_base):
             while not self.__is_end():
                 yield self
                 if self.thisptr:
-                    inc(deref(defs.static_cast[leaf_iterator_ptr](self.thisptr)))
+                    inc(deref(self.thisptr))
                 else:
                     break
         else:
@@ -267,13 +295,28 @@ cdef class leaf_bbx_iterator(iterator_base):
     """
     Iterator over the complete tree (leafs).
     """
+    cdef leaf_bbx_iterator_ptr thisptr
+    
     def __cinit__(self):
         pass
+
+    def __dealloc__(self):
+        if self.thisptr:
+            del self.thisptr
+
+    def __is_end(self):
+        return deref(self.thisptr) == self.treeptr.end_leafs_bbx()
+
+    def __is_acceseable(self):
+        if self.thisptr and self.treeptr:
+            if not self.__is_end():
+                return True
+        return False
 
     def next(self):
         if self.thisptr and self.treeptr:
             if not self.__is_end():
-                inc(deref(defs.static_cast[leaf_bbx_iterator_ptr](self.thisptr)))
+                inc(deref(self.thisptr))
                 return self
             else:
                 raise StopIteration
@@ -285,7 +328,7 @@ cdef class leaf_bbx_iterator(iterator_base):
             while not self.__is_end():
                 yield self
                 if self.thisptr:
-                    inc(deref(defs.static_cast[leaf_bbx_iterator_ptr](self.thisptr)))
+                    inc(deref(self.thisptr))
                 else:
                     break
         else:
