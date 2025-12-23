@@ -270,6 +270,85 @@ cdef class leaf_iterator(iterator_base):
                 return True
         return False
 
+    def getCoordinate(self):
+        """
+        return the center coordinate of the current node
+        """
+        cdef defs.Vector3 pt
+        if self.__is_acceseable():
+            pt = self.thisptr.getCoordinate()
+            return np.array((pt.x(), pt.y(), pt.z()))
+        else:
+            raise NullPointerException
+
+    def getDepth(self):
+        if self.__is_acceseable():
+            return self.thisptr.getDepth()
+        else:
+            raise NullPointerException
+
+    def getKey(self):
+        """
+        the OcTreeKey of the current node
+        """
+        if self.__is_acceseable():
+            key = OcTreeKey()
+            key.thisptr[0][0] = self.thisptr.getKey()[0]
+            key.thisptr[0][1] = self.thisptr.getKey()[1]
+            key.thisptr[0][2] = self.thisptr.getKey()[2]
+            return key
+        else:
+            raise NullPointerException
+
+    def getIndexKey(self):
+        """
+        the OcTreeKey of the current node, for nodes with depth != maxDepth
+        """
+        if self.__is_acceseable():
+            key = OcTreeKey()
+            key.thisptr[0][0] = self.thisptr.getIndexKey()[0]
+            key.thisptr[0][1] = self.thisptr.getIndexKey()[1]
+            key.thisptr[0][2] = self.thisptr.getIndexKey()[2]
+            return key
+        else:
+            raise NullPointerException
+
+    def getSize(self):
+        if self.__is_acceseable():
+            return self.thisptr.getSize()
+        else:
+            raise NullPointerException
+
+    def getX(self):
+        if self.__is_acceseable():
+            return self.thisptr.getX()
+        else:
+            raise NullPointerException
+            
+    def getY(self):
+        if self.__is_acceseable():
+            return self.thisptr.getY()
+        else:
+            raise NullPointerException
+            
+    def getZ(self):
+        if self.__is_acceseable():
+            return self.thisptr.getZ()
+        else:
+            raise NullPointerException
+
+    def getOccupancy(self):
+        if self.__is_acceseable():
+            return (<defs.OcTreeNode>deref(deref(self.thisptr))).getOccupancy()
+        else:
+            raise NullPointerException
+
+    def getValue(self):
+        if self.__is_acceseable():
+            return (<defs.OcTreeNode>deref(deref(self.thisptr))).getValue()
+        else:
+            raise NullPointerException
+
     def next(self):
         if self.thisptr and self.treeptr:
             if not self.__is_end():
@@ -312,6 +391,85 @@ cdef class leaf_bbx_iterator(iterator_base):
             if not self.__is_end():
                 return True
         return False
+
+    def getCoordinate(self):
+        """
+        return the center coordinate of the current node
+        """
+        cdef defs.Vector3 pt
+        if self.__is_acceseable():
+            pt = self.thisptr.getCoordinate()
+            return np.array((pt.x(), pt.y(), pt.z()))
+        else:
+            raise NullPointerException
+
+    def getDepth(self):
+        if self.__is_acceseable():
+            return self.thisptr.getDepth()
+        else:
+            raise NullPointerException
+
+    def getKey(self):
+        """
+        the OcTreeKey of the current node
+        """
+        if self.__is_acceseable():
+            key = OcTreeKey()
+            key.thisptr[0][0] = self.thisptr.getKey()[0]
+            key.thisptr[0][1] = self.thisptr.getKey()[1]
+            key.thisptr[0][2] = self.thisptr.getKey()[2]
+            return key
+        else:
+            raise NullPointerException
+
+    def getIndexKey(self):
+        """
+        the OcTreeKey of the current node, for nodes with depth != maxDepth
+        """
+        if self.__is_acceseable():
+            key = OcTreeKey()
+            key.thisptr[0][0] = self.thisptr.getIndexKey()[0]
+            key.thisptr[0][1] = self.thisptr.getIndexKey()[1]
+            key.thisptr[0][2] = self.thisptr.getIndexKey()[2]
+            return key
+        else:
+            raise NullPointerException
+
+    def getSize(self):
+        if self.__is_acceseable():
+            return self.thisptr.getSize()
+        else:
+            raise NullPointerException
+
+    def getX(self):
+        if self.__is_acceseable():
+            return self.thisptr.getX()
+        else:
+            raise NullPointerException
+            
+    def getY(self):
+        if self.__is_acceseable():
+            return self.thisptr.getY()
+        else:
+            raise NullPointerException
+            
+    def getZ(self):
+        if self.__is_acceseable():
+            return self.thisptr.getZ()
+        else:
+            raise NullPointerException
+
+    def getOccupancy(self):
+        if self.__is_acceseable():
+            return (<defs.OcTreeNode>deref(deref(self.thisptr))).getOccupancy()
+        else:
+            raise NullPointerException
+
+    def getValue(self):
+        if self.__is_acceseable():
+            return (<defs.OcTreeNode>deref(deref(self.thisptr))).getValue()
+        else:
+            raise NullPointerException
 
     def next(self):
         if self.thisptr and self.treeptr:
